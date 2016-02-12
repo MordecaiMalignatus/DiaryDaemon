@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -31,8 +32,9 @@ namespace DiaryDaemon
         {
             if (e.Key == Key.Return)
             {
-                Log(input.Text);
-                input.Clear();
+                var response = input.Text;
+                this.Close();
+                Log(response);
             }
 
             if (e.Key == Key.Escape)
@@ -43,16 +45,42 @@ namespace DiaryDaemon
 
         private void Log(string content)
         {
-            var fileName = FindFileName();
+            var datetime = RetrieveUtcNow();
+
+            var fileName = FindFileName(datetime.Date);
+            var time = datetime.ToShortTimeString();
+
             using (var sw = new StreamWriter(fileName))
             {
                 sw.WriteLine(content);
             }
         }
 
-        private string FindFileName()
+        private string FindFileName(DateTime date)
         {
             return "goddamnit VS";
+        }
+
+        /// <summary>
+        /// My system clock is fucked, so instead of doing the right thing and swapping out the CMOS battery 
+        /// or buying a new mainboard, I work around problems in software! 
+        /// </summary>
+        /// 
+        /// <returns>
+        /// A "short" timestring that represents now in UTC, like 13:01. 
+        /// </returns>
+        private DateTime RetrieveUtcNow()
+        {
+            var request = WebRequest.CreateHttp("http://www.timeapi.org/utc/now");
+            request.Method = "get";
+            request.UserAgent = "github/az4reus"; 
+
+            // Whyever this is this complicated, I don't know.
+            var requestStream = request.GetResponse().GetResponseStream();
+            var sr = new StreamReader(requestStream);
+            var rawResponse = sr.ReadToEnd();
+
+            return DateTime.Parse(rawResponse);
         }
     }
 }
