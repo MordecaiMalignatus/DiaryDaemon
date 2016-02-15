@@ -9,7 +9,7 @@ using System.Windows.Interop;
 
 namespace DiaryDaemon
 {
-    class GlobalHotkeys
+    class GlobalHotkeys : IDisposable
     { 
         [DllImport("user32.dll")]
         private static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
@@ -66,6 +66,14 @@ namespace DiaryDaemon
             UnregisterHotKey(Handle, hotkeyId);
             _registeredHotKeys.Remove(hotkeyId);
             _callbacks.Remove(hotkeyId); 
+        }
+
+        public void Dispose()
+        {
+            foreach (var key in _registeredHotKeys.Keys)
+            {
+                UnregisterGlobalHotkey(key);
+            }
         }
 
         private IntPtr HwndHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
