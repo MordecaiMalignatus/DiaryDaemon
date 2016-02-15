@@ -3,24 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 using System.Windows.Input;
 using System.Windows.Interop;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using static System.DateTime;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
-using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace DiaryDaemon
 {
@@ -29,8 +17,8 @@ namespace DiaryDaemon
     /// </summary>
     public partial class MainWindow : Window
     {
-
-        private HwndSource source; 
+        private const int IndentationWidth = 4;
+        private const int LineWidth = 80; 
 
         public MainWindow()
         {
@@ -53,6 +41,41 @@ namespace DiaryDaemon
             }
         }
 
+        private static string FormatLogString(string log)
+        {
+            if (log.Length < LineWidth) return log;
+
+            const int desiredLength = LineWidth - IndentationWidth;
+            var words = log.Split(' ');
+
+            var lines = Lines(words, desiredLength);
+            var indentedLines = 
+                lines
+                .Skip(1)
+                .Select(line => line.PadLeft(IndentationWidth));
+
+            return string.Join(" ", indentedLines);
+        }
+
+        private static IEnumerable<string> Lines(IEnumerable<string> words, int lineLength)
+        {
+            var currentLine = ""; 
+            var ret = new List<string>();
+
+            foreach (var word in words)
+            {
+                if (currentLine.Length > lineLength)
+                {
+                    ret.Add(currentLine);
+                    currentLine = ""; 
+                }
+
+                currentLine += word; 
+            }
+
+            return ret; 
+        }
+
         private void Log(string content)
         {
             var datetime = RetrieveUtcNow();
@@ -73,7 +96,7 @@ namespace DiaryDaemon
             var homeDir = Directory.GetCurrentDirectory();
 
             var archive = homeDir + @"\logs";
-            var dateString = makeDateString(date);
+            var dateString = MakeDateString(date);
             var fileName = $"{date.Month}-{date.Day}";
 
             Directory.CreateDirectory(archive + "\\" + dateString);
@@ -81,7 +104,7 @@ namespace DiaryDaemon
             return $"{archive}\\{dateString}\\{fileName}.txt";
         }
 
-        private static string makeDateString(DateTime date)
+        private static string MakeDateString(DateTime date)
         {
             return date.Year + "-" + date.Month; 
         }
@@ -94,7 +117,7 @@ namespace DiaryDaemon
         /// <returns>
         /// A "short" timestring that represents now in UTC, like 13:01. 
         /// </returns>
-        private DateTime RetrieveUtcNow()
+        private static DateTime RetrieveUtcNow()
         {
             var request = WebRequest.CreateHttp("http://www.timeapi.org/utc/now");
             request.Method = "get";
