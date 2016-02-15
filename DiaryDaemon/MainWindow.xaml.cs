@@ -9,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using static System.DateTime;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using MessageBox = System.Windows.MessageBox;
 
 namespace DiaryDaemon
 {
@@ -18,12 +19,21 @@ namespace DiaryDaemon
     public partial class MainWindow : Window
     {
         private const int IndentationWidth = 4;
-        private const int LineWidth = 80; 
+        private const int LineWidth = 80;
+        private readonly GlobalHotkeys _hotkeys; 
 
         public MainWindow()
         {
             InitializeComponent();
             input.Focus();
+
+            _hotkeys = new GlobalHotkeys(this);
+            _hotkeys.RegisterGlobalHotkey(Keys.T, ModifierKeys.Alt, (() => MessageBox.Show("Success!"))); 
+        }
+
+        ~MainWindow()
+        {
+            _hotkeys.Dispose();
         }
 
         private void _onKeyDown(object sender, KeyEventArgs e)
