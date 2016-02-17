@@ -8,7 +8,7 @@ using System.Windows.Interop;
 
 namespace DiaryDaemon
 {
-    class GlobalHotkeys
+    class GlobalHotkeys : IDisposable
     { 
         [DllImport("user32.dll")]
         private static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
@@ -55,7 +55,7 @@ namespace DiaryDaemon
             _callbacks.Remove(hotkeyId); 
         }
 
-        public void Cleanup()
+        public void Dispose()
         {
             foreach (var key in _cleanupList)
             {

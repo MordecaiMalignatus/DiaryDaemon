@@ -48,7 +48,7 @@ namespace DiaryDaemon
 
         public void Dispose()
         {
-            _hotkeys.Cleanup();
+            _hotkeys.Dispose();
         }
 
         private static string FormatLogString(string log)
