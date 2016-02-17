@@ -5,9 +5,6 @@ using System.Windows.Input;
 
 namespace DiaryDaemon
 {
-    /// <summary>
-    /// Interaction logic for SystrayDispatcher.xaml
-    /// </summary>
     public partial class SystrayDispatcher : Window, IDisposable
     {
         private NotifyIcon _icon;
