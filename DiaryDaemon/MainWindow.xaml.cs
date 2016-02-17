@@ -33,6 +33,13 @@ namespace DiaryDaemon
 
         private void _onKeyDown(object sender, KeyEventArgs e)
         {
+            if (e.Key == Key.Return 
+                && (e.KeyboardDevice.IsKeyDown(Key.LeftShift) || e.KeyboardDevice.IsKeyDown(Key.RightShift)))
+            {
+                input.Text += Environment.NewLine;
+                return;
+            }
+
             if (e.Key == Key.Return)
             {
                 var response = input.Text;
@@ -77,8 +84,6 @@ namespace DiaryDaemon
 
                 currentLine += word + " "; 
             }
-            // Adding an empty line afte each entry, for better readability.
-            currentLine += Environment.NewLine;
 
             // Don't forget the leftovers. 
             ret.Add(currentLine);
@@ -97,11 +102,11 @@ namespace DiaryDaemon
 
             using (var sw = new StreamWriter(fileName, true))
             {
-                sw.WriteLine(FormatLogString(logstring));
+                sw.WriteLine(FormatLogString(logstring + Environment.NewLine));
             }
         }
 
-        private string FindFileName(DateTime date)
+        private static string FindFileName(DateTime date)
         {
             var homeDir = Directory.GetCurrentDirectory();
 
