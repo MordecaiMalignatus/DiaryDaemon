@@ -27,13 +27,10 @@ namespace DiaryDaemon
             InitializeComponent();
             input.Focus();
 
-            _hotkeys = new GlobalHotkeys(this);
-            _hotkeys.RegisterGlobalHotkey(Keys.T, ModifierKeys.Alt, (() => MessageBox.Show("Success!"))); 
-        }
 
-        ~MainWindow()
-        {
-            _hotkeys.Dispose();
+
+            _hotkeys = new GlobalHotkeys(this);
+            _hotkeys.RegisterGlobalHotkey(Keys.F2, ModifierKeys.None, () => MessageBox.Show("Success!")); 
         }
 
         private void _onKeyDown(object sender, KeyEventArgs e)
@@ -43,11 +40,13 @@ namespace DiaryDaemon
                 var response = input.Text;
                 this.Close();
                 Log(response);
+                _hotkeys.Cleanup();
             }
 
             if (e.Key == Key.Escape)
             {
                 this.Close();
+                _hotkeys.Cleanup();
             }
         }
 

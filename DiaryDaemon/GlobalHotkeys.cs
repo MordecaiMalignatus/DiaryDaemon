@@ -6,10 +6,11 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
+using MessageBox = System.Windows.MessageBox;
 
 namespace DiaryDaemon
 {
-    class GlobalHotkeys : IDisposable
+    class GlobalHotkeys
     { 
         [DllImport("user32.dll")]
         private static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
@@ -25,64 +26,58 @@ namespace DiaryDaemon
         private IntPtr Handle { get;  }
         private const int WmHotkey = 0x0312;
 
-        private readonly Dictionary<int, Tuple<Keys, ModifierKeys>> _registeredHotKeys;
-        private readonly Dictionary<int, Action> _callbacks; 
+        private readonly Dictionary<int, Tuple<Keys, ModifierKeys>> _registeredHotKeys = new Dictionary<int, Tuple<Keys, ModifierKeys>>();
+        private readonly Dictionary<int, Action> _callbacks = new Dictionary<int, Action>(); 
+        private readonly List<int> _cleanupList = new List<int>(); 
 
         public GlobalHotkeys(Window parentWindow)
         {
-            Handle = new WindowInteropHelper(parentWindow).Handle;
+            Handle = new WindowInteropHelper(parentWindow).EnsureHandle();
             Source = HwndSource.FromHwnd(Handle);
             Source.AddHook(HwndHook);
-
-            _registeredHotKeys = new Dictionary<int, Tuple<Keys, ModifierKeys>>();
-            _callbacks = new Dictionary<int, Action>();
 
             _currentHotkey = HotkeyStart;
         }
 
-        public int RegisterGlobalHotkey(Keys hotkey, ModifierKeys mods, Action callback)
+        public void RegisterGlobalHotkey(Keys hotkey, ModifierKeys mods, Action callback)
         {
-            RegisterHotKey(Handle, _currentHotkey, (uint) mods, (uint) hotkey);
+            var success = RegisterHotKey(Handle, _currentHotkey, (uint) mods, (uint) hotkey);
+
+            MessageBox.Show($"REgistering the hotkey was successful: {success}");
+
             _registeredHotKeys.Add(_currentHotkey, new Tuple<Keys, ModifierKeys>(hotkey, mods));
             _callbacks.Add(_currentHotkey, callback);
+            _cleanupList.Add(_currentHotkey);
 
             _currentHotkey++;
-            return _currentHotkey - 1;
         }
 
-        public void UnregisterGlobalHotkey(Keys hotkey, ModifierKeys mods)
-        {
-            var hotkeyId = _registeredHotKeys
-                .FirstOrDefault(x => x.Value.Equals(new Tuple<Keys, ModifierKeys>(hotkey, mods)))
-                .Key;
-
-            UnregisterHotKey(Handle, hotkeyId);
-            _registeredHotKeys.Remove(hotkeyId);
-            _callbacks.Remove(hotkeyId);
-        }
-
-        public void UnregisterGlobalHotkey(int hotkeyId)
+        private void UnregisterGlobalHotkey(int hotkeyId)
         {
             UnregisterHotKey(Handle, hotkeyId);
             _registeredHotKeys.Remove(hotkeyId);
             _callbacks.Remove(hotkeyId); 
         }
 
-        public void Dispose()
+        public void Cleanup()
         {
-            foreach (var key in _registeredHotKeys.Keys)
+            foreach (var key in _cleanupList)
             {
                 UnregisterGlobalHotkey(key);
             }
         }
 
         private IntPtr HwndHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-        { 
+        {
+            // If the message has the type 0x0312, then it's a global hotkey, or what we're looking for. 
             if (msg == WmHotkey)
             {
                 var wpar = wParam.ToInt32();
-                if (_callbacks.ContainsKey(wpar))
+
+                if (_cleanupList.Contains(wpar))
                 {
+                    // The windows API hides modifier keys and the actual key code in LOWERWORD and UPPERWORD, 
+                    // meaning you have to separate the two before you can work with it. 
                     var vkey = (((int) lParam >> 16) & 0xFFFF);
                     var hotkey = _registeredHotKeys[wpar].Item1;
 
