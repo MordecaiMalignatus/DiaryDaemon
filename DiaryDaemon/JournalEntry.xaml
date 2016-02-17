@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DiaryDaemon"
         mc:Ignorable="d"
-        Title="DiaryDaemon" Height="100" Width="500">
+        Title="DiaryDaemon" Height="200" Width="500">
     <Grid>
-        <TextBox x:Name="input" HorizontalAlignment="Left" Height="49" Margin="10,10,10,10" TextWrapping="Wrap" VerticalAlignment="Top" Width="472" KeyDown="_onKeyDown"/>
+        <TextBox x:Name="input" HorizontalAlignment="Left" Height="149" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="472" KeyDown="_onKeyDown" FontSize="16" FontFamily="Garamond"/>
     </Grid>
 </Window>
