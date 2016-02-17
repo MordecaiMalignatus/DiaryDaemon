@@ -16,7 +16,7 @@ namespace DiaryDaemon
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, IDisposable
     {
         private const int IndentationWidth = 4;
         private const int LineWidth = 80;
@@ -26,8 +26,6 @@ namespace DiaryDaemon
         {
             InitializeComponent();
             input.Focus();
-
-
 
             _hotkeys = new GlobalHotkeys(this);
             _hotkeys.RegisterGlobalHotkey(Keys.F2, ModifierKeys.None, () => MessageBox.Show("Success!")); 
@@ -40,14 +38,17 @@ namespace DiaryDaemon
                 var response = input.Text;
                 this.Close();
                 Log(response);
-                _hotkeys.Cleanup();
             }
 
             if (e.Key == Key.Escape)
             {
                 this.Close();
-                _hotkeys.Cleanup();
             }
+        }
+
+        public void Dispose()
+        {
+            _hotkeys.Cleanup();
         }
 
         private static string FormatLogString(string log)
@@ -58,12 +59,7 @@ namespace DiaryDaemon
             var words = log.Split(' ');
 
             var lines = Lines(words, desiredLength);
-            var indentedLines = 
-                lines
-                .Skip(1)
-                .Select(line => line.PadLeft(IndentationWidth));
-
-            return string.Join(" ", indentedLines);
+            return string.Join(Environment.NewLine, lines);
         }
 
         private static IEnumerable<string> Lines(IEnumerable<string> words, int lineLength)
@@ -79,8 +75,13 @@ namespace DiaryDaemon
                     currentLine = ""; 
                 }
 
-                currentLine += word; 
+                currentLine += word + " "; 
             }
+            // Adding an empty line afte each entry, for better readability.
+            currentLine += Environment.NewLine;
+
+            // Don't forget the leftovers. 
+            ret.Add(currentLine);
 
             return ret; 
         }
@@ -94,9 +95,9 @@ namespace DiaryDaemon
 
             var logstring = time + " - " + content; 
 
-            using (var sw = new StreamWriter(fileName))
+            using (var sw = new StreamWriter(fileName, true))
             {
-                sw.WriteLine(logstring);
+                sw.WriteLine(FormatLogString(logstring));
             }
         }
 
@@ -105,17 +106,12 @@ namespace DiaryDaemon
             var homeDir = Directory.GetCurrentDirectory();
 
             var archive = homeDir + @"\logs";
-            var dateString = MakeDateString(date);
+            var dateString = date.Year + "-" + date.Month;
             var fileName = $"{date.Month}-{date.Day}";
 
             Directory.CreateDirectory(archive + "\\" + dateString);
 
             return $"{archive}\\{dateString}\\{fileName}.txt";
-        }
-
-        private static string MakeDateString(DateTime date)
-        {
-            return date.Year + "-" + date.Month; 
         }
 
         /// <summary>
