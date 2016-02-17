@@ -39,7 +39,7 @@ namespace DiaryDaemon
 
         public void RegisterGlobalHotkey(Keys hotkey, ModifierKeys mods, Action callback)
         {
-            var success = RegisterHotKey(Handle, _currentHotkey, (uint) mods, (uint) hotkey);
+            RegisterHotKey(Handle, _currentHotkey, (uint) mods, (uint) hotkey);
 
             _registeredHotKeys.Add(_currentHotkey, new Tuple<Keys, ModifierKeys>(hotkey, mods));
             _callbacks.Add(_currentHotkey, callback);
