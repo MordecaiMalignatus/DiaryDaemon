@@ -56,7 +56,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="MainWindow.xaml">
+    <Compile Include="SystrayDispatcher.xaml.cs">
+      <DependentUpon>SystrayDispatcher.xaml</DependentUpon>
+    </Compile>
+    <Page Include="JournalEntry.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -65,10 +68,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GlobalHotkeys.cs" />
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
+    <Compile Include="JournalEntry.xaml.cs">
+      <DependentUpon>JournalEntry.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="SystrayDispatcher.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

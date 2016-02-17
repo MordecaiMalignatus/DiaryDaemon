@@ -14,21 +14,18 @@ using MessageBox = System.Windows.MessageBox;
 namespace DiaryDaemon
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for JournalEntry.xaml
     /// </summary>
-    public partial class MainWindow : Window, IDisposable
+    public partial class JournalEntry : Window, IDisposable
     {
         private const int IndentationWidth = 4;
         private const int LineWidth = 80;
         private readonly GlobalHotkeys _hotkeys; 
 
-        public MainWindow()
+        public JournalEntry()
         {
             InitializeComponent();
             input.Focus();
-
-            _hotkeys = new GlobalHotkeys(this);
-            _hotkeys.RegisterGlobalHotkey(Keys.F2, ModifierKeys.None, () => MessageBox.Show("Success!")); 
         }
 
         private void _onKeyDown(object sender, KeyEventArgs e)
