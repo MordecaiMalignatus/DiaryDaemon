@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
-using MessageBox = System.Windows.MessageBox;
 
 namespace DiaryDaemon
 {
@@ -42,8 +40,6 @@ namespace DiaryDaemon
         public void RegisterGlobalHotkey(Keys hotkey, ModifierKeys mods, Action callback)
         {
             var success = RegisterHotKey(Handle, _currentHotkey, (uint) mods, (uint) hotkey);
-
-            MessageBox.Show($"REgistering the hotkey was successful: {success}");
 
             _registeredHotKeys.Add(_currentHotkey, new Tuple<Keys, ModifierKeys>(hotkey, mods));
             _callbacks.Add(_currentHotkey, callback);
