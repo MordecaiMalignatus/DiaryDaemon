@@ -13,14 +13,10 @@ using MessageBox = System.Windows.MessageBox;
 
 namespace DiaryDaemon
 {
-    /// <summary>
-    /// Interaction logic for JournalEntry.xaml
-    /// </summary>
     public partial class JournalEntry : Window, IDisposable
     {
         private const int IndentationWidth = 4;
         private const int LineWidth = 80;
-        private readonly GlobalHotkeys _hotkeys; 
 
         public JournalEntry()
         {
@@ -45,7 +41,7 @@ namespace DiaryDaemon
 
         public void Dispose()
         {
-            _hotkeys.Dispose();
+            this.Close();
         }
 
         private static string FormatLogString(string log)
