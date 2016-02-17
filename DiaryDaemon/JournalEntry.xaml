@@ -7,6 +7,6 @@
         mc:Ignorable="d"
         Title="DiaryDaemon" Height="200" Width="500">
     <Grid>
-        <TextBox x:Name="input" HorizontalAlignment="Left" Height="149" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="472" KeyDown="_onKeyDown" FontSize="16" FontFamily="Garamond"/>
+        <TextBox x:Name="input" HorizontalAlignment="Left" Height="149" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="472" KeyDown="_onKeyDown" FontSize="16" FontFamily="Inconsolata"/>
     </Grid>
 </Window>
