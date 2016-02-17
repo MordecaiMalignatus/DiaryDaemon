@@ -67,7 +67,7 @@ namespace DiaryDaemon
 
         private static string FindFileName(DateTime date)
         {
-            var homeDir = Directory.GetCurrentDirectory();
+            var homeDir = ConfigurationManager.AppSettings["fileLocation"];
 
             var archive = homeDir + @"\logs";
             var dateString = date.Year + "-" + date.Month;
