@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -18,15 +19,13 @@ namespace DiaryDaemon
             _hotkeys.RegisterGlobalHotkey(Keys.NumPad0, ModifierKeys.Alt, (() => new JournalEntry().Show()));
         }
 
-        public void OnInitialize()
+        protected override void OnInitialized(EventArgs e)
         {
-            _icon = new NotifyIcon();
+            var icon = new Icon(SystemIcons.Asterisk, 40, 40); 
+            _icon = new NotifyIcon {Icon = icon};
             _icon.DoubleClick += (sender, args) => this.Dispose();
-        }
-
-        public void OnLoaded()
-        {
-            _icon.Visible = true; 
+            _icon.Visible = true;
+            _icon.Text = "DiaryDaemon"; 
         }
         
         public void Dispose()
