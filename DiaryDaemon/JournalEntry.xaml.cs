@@ -30,13 +30,6 @@ namespace DiaryDaemon
 
         private void _onKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Return 
-                && (e.KeyboardDevice.IsKeyDown(Key.LeftShift) || e.KeyboardDevice.IsKeyDown(Key.RightShift)))
-            {
-                input.Text += Environment.NewLine;
-                return;
-            }
-
             if (e.Key == Key.Return)
             {
                 var response = input.Text;
