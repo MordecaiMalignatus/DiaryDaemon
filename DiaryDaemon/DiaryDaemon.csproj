@@ -61,6 +61,7 @@
     <Compile Include="SystrayDispatcher.xaml.cs">
       <DependentUpon>SystrayDispatcher.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Util\Configs.cs" />
     <Compile Include="Util\Date.cs" />
     <Compile Include="Util\Strings.cs" />
     <Page Include="JournalEntry.xaml">

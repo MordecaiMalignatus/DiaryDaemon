@@ -27,7 +27,7 @@ namespace DiaryDaemon
             {
                 var response = input.Text;
                 Close();
-                Log(response);
+                WriteLog(response);
             }
 
             if (e.Key == Key.Escape)
@@ -38,26 +38,23 @@ namespace DiaryDaemon
 
         private static string FormatLogString(string log)
         {
-            var width = int.Parse(ConfigurationManager.AppSettings["logLineWidth"]);
-            var indentation = int.Parse(ConfigurationManager.AppSettings["logIndentationLevel"]);
-
+            var width = int.Parse(Configs.TryRetrieveConfig("logLineWidth")); 
             if (log.Length < width) return log;
 
-            var desiredLength = width - indentation;
             var words = log.Split(' ');
 
-            var lines = Lines(words, desiredLength);
+            var lines = Lines(words, width);
             return string.Join(Environment.NewLine, lines);
         }
 
-        private static void Log(string content)
+        private static void WriteLog(string content)
         {
             var datetime = Date.RetrieveUtcNow();
 
-            var fileName = FindFileName(datetime.Date);
+            var fileName = FindFilePath(datetime.Date);
             var time = datetime.ToShortTimeString();
 
-            var logstring = time + " - " + content;
+            var logstring = $"{time} - {content}";
 
             using (var sw = new StreamWriter(fileName, true))
             {
@@ -65,11 +62,11 @@ namespace DiaryDaemon
             }
         }
 
-        private static string FindFileName(DateTime date)
+        private static string FindFilePath(DateTime date)
         {
-            var homeDir = ConfigurationManager.AppSettings["fileLocation"];
+            var homeDir = Configs.TryRetrieveConfig("fileLocation");
 
-            var dateString = date.Year + "-" + date.Month;
+            var dateString = $"{date.Year}-{date.Month}";
             var fileName = $"{date.Month}-{date.Day}";
 
             Directory.CreateDirectory(homeDir + "\\" + dateString);
