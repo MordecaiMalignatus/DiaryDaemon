@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace DiaryDaemon.Util
@@ -17,7 +18,7 @@ namespace DiaryDaemon.Util
         /// <returns>
         /// Returns an Enumerable containing the concatenated lines.
         /// </returns>
-        public static IEnumerable<string> Lines(IEnumerable<string> words, int lineLength)
+        public static IEnumerable<string> ConcatenateWords(IEnumerable<string> words, int lineLength)
         {
             var currentLine = ""; 
             var ret = new List<string>();
@@ -37,6 +38,16 @@ namespace DiaryDaemon.Util
             ret.Add(currentLine);
 
             return ret; 
+        }
+
+        /// <summary>
+        /// Joins a bunch of lines to a single string. Works much like haskells unlines. 
+        /// </summary>
+        /// <param name="lines">An Enumberable of strings.</param>
+        /// <returns>All the strings joined by newlines.</returns>
+        public static string Unlines(IEnumerable<string> lines)
+        {
+            return string.Join(Environment.NewLine, lines); 
         }
     }
 }

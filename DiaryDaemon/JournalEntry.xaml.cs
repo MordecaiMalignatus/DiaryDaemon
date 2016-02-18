@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
 using DiaryDaemon.Util;
@@ -27,7 +28,7 @@ namespace DiaryDaemon
             {
                 var response = input.Text;
                 Close();
-                WriteLog(response);
+                Log(response);
             }
 
             if (e.Key == Key.Escape)
@@ -36,30 +37,38 @@ namespace DiaryDaemon
             }
         }
 
-        private static string FormatLogString(string log)
+        private static string FormatLogString(string log, string shortTimeString)
         {
             var width = int.Parse(Configs.TryRetrieveConfig("logLineWidth")); 
             if (log.Length < width) return log;
 
             var words = log.Split(' ');
 
-            var lines = Lines(words, width);
-            return string.Join(Environment.NewLine, lines);
-        }
-
-        private static void WriteLog(string content)
-        {
             var datetime = Date.RetrieveUtcNow();
-
-            var fileName = FindFilePath(datetime.Date);
             var time = datetime.ToShortTimeString();
 
-            var logstring = $"{time} - {content}";
+            var content = Unlines(ConcatenateWords(words, width));
 
-            using (var sw = new StreamWriter(fileName, true))
+            return $"{time} - {content}";
+        }
+
+        private static void WriteLog(string content, string filepath)
+        {
+            using (var sw = new StreamWriter(filepath, true))
             {
-                sw.WriteLine(FormatLogString(logstring + Environment.NewLine));
+                sw.WriteLine(content + Environment.NewLine);
             }
+        }
+
+        private static void Log(string logstring)
+        {
+            var datetime = Date.RetrieveUtcNow();
+            var timestring = datetime.ToShortTimeString();
+
+            var formattedLog = FormatLogString(logstring, timestring);
+            var filepath = FindFilePath(datetime.Date); 
+
+            WriteLog(formattedLog, filepath);
         }
 
         private static string FindFilePath(DateTime date)
