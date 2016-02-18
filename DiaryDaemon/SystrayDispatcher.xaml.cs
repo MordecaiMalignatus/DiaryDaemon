@@ -16,7 +16,8 @@ namespace DiaryDaemon
             InitializeComponent();
 
             _hotkeys = new GlobalHotkeys(this);
-            _hotkeys.RegisterGlobalHotkey(Keys.NumPad0, ModifierKeys.Alt, (() => new JournalEntry().Show()));
+            _hotkeys.RegisterGlobalHotkey(Keys.NumPad0, ModifierKeys.Alt, 
+                (() => new JournalEntry().Show()));
         }
 
         public void Dispose()
@@ -31,7 +32,7 @@ namespace DiaryDaemon
             _icon = new NotifyIcon {Icon = icon};
             _icon.DoubleClick += (sender, args) => Dispose();
             _icon.Visible = true;
-            _icon.Text = "DiaryDaemon";
+            _icon.Text = "DiaryDaemon -- Try pressing alt+numpad0!";
         }
 
         public void Dispose(bool everything)
