@@ -1,16 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace DiaryDaemon.Util
 {
-    class Configs
+    internal static class Configs
     {
+        /// <summary>
+        /// A slightly better config manager, it shows a popup before it explodes. 
+        /// </summary>
+        /// <param name="key">The key to retrieve.</param>
+        /// <returns>The appropriate value in the primary .exe.config.</returns>
         public static string TryRetrieveConfig(string key)
         {
             try
@@ -19,7 +19,8 @@ namespace DiaryDaemon.Util
             }
             catch (Exception e)
             {
-                var error = "The parser exploded at your config file, double check that. The error given to it was: " +
+                var error = $"The parser exploded at your config file, at key '{key}' " +
+                            "double check that. " +
                             Environment.NewLine + Environment.NewLine;
                 MessageBox.Show(error + e);
 
