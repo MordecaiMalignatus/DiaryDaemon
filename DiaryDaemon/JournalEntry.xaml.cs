@@ -69,13 +69,12 @@ namespace DiaryDaemon
         {
             var homeDir = ConfigurationManager.AppSettings["fileLocation"];
 
-            var archive = homeDir + @"\logs";
             var dateString = date.Year + "-" + date.Month;
             var fileName = $"{date.Month}-{date.Day}";
 
-            Directory.CreateDirectory(archive + "\\" + dateString);
+            Directory.CreateDirectory(homeDir + "\\" + dateString);
 
-            return $"{archive}\\{dateString}\\{fileName}.txt";
+            return $"{homeDir}\\{dateString}\\{fileName}.txt";
         }
     }
 }
